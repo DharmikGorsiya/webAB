@@ -1,0 +1,53 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.62f1
+CRC: 1892238727
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: e4ccac2bf47698598bb868fbefe2a07c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 8fed8300534e728361f49cc4fa309236
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 0ca1a7df01ab979924743735964d2803
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 17a64d9ee028447d985fe951d225f315, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: CarColor
+- AssemblyName: Assembly-CSharp
+  ClassName: CarData
+- AssemblyName: Assembly-CSharp
+  ClassName: CarDoor
+- AssemblyName: Assembly-CSharp
+  ClassName: CarLight
+- AssemblyName: Assembly-CSharp
+  ClassName: MainCarColor
+Assets:
+- Assets/ABMaker/Car/ford-ranger-2025_For_unity.prefab
+Dependencies: []
