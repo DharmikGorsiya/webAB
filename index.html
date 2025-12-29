@@ -55,12 +55,26 @@
       width: 60%;
       height: 6px;
       background: #333;
+      display: none; /* Hidden until Unity starts loading */
     }
 
     #unity-progress-bar-full {
       width: 0%;
       height: 100%;
       background: white;
+    }
+    
+    #unity-canvas {
+      opacity: 0; /* Hide canvas until loaded */
+    }
+    
+    #startOverlay.loading {
+      pointer-events: none; /* Disable button clicks while loading */
+    }
+    
+    #startOverlay.loading button {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -105,29 +119,93 @@
   };
 
   let unityInstance = null;
+  let isUnityLoading = false;
+  
+  // Flag to prevent automatic permission requests - must be set by user interaction
+  window._userInitiatedARRequest = false;
 
-  const script = document.createElement("script");
-  script.src = loaderUrl;
-  script.onload = () => {
-    createUnityInstance(
-      document.getElementById("unity-canvas"),
-      config,
-      (progress) => {
-        document.getElementById("unity-progress-bar-full").style.width =
-          (progress * 100) + "%";
+  // Function to start loading Unity (only called after button click)
+  function startUnityLoading() {
+    if (isUnityLoading) {
+      console.log("Unity is already loading");
+      return;
+    }
+    
+    isUnityLoading = true;
+    console.log("Starting Unity loading...");
+    
+    // Show loading bar
+    document.getElementById("unity-loading-bar").style.display = "block";
+    
+    // Add loading class to overlay to disable button
+    const overlay = document.getElementById("startOverlay");
+    overlay.classList.add("loading");
+    
+    // Update overlay text
+    const button = document.getElementById("btnStartAR");
+    if (button) {
+      button.textContent = "Loading...";
+    }
+
+    const script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(
+        document.getElementById("unity-canvas"),
+        config,
+        (progress) => {
+          document.getElementById("unity-progress-bar-full").style.width =
+            (progress * 100) + "%";
+        }
+      ).then((instance) => {
+        unityInstance = instance;
+        console.log("Unity loaded");
+        
+        // Hide loading bar and show canvas
+        document.getElementById("unity-loading-bar").style.display = "none";
+        document.getElementById("unity-canvas").style.opacity = "1";
+        
+        // Now request permissions (Unity is ready)
+        window.RequestARPermissionsAndStart();
+      }).catch((error) => {
+        console.error("Unity loading failed:", error);
+        overlay.classList.remove("loading");
+        if (button) {
+          button.textContent = "Start AR";
+          button.style.opacity = "1";
+        }
+        alert("Failed to load Unity. Please refresh the page.");
+      });
+    };
+    script.onerror = () => {
+      console.error("Failed to load Unity loader script");
+      overlay.classList.remove("loading");
+      if (button) {
+        button.textContent = "Start AR";
+        button.style.opacity = "1";
       }
-    ).then((instance) => {
-      unityInstance = instance;
-      console.log("Unity loaded");
-    });
-  };
-  document.body.appendChild(script);
+      alert("Failed to load Unity. Please refresh the page.");
+    };
+    document.body.appendChild(script);
+  }
 
   /******************************************************************
    * REQUIRED FOR DllImport("__Internal")
    * MUST BE ON window OBJECT
+   * Only call this from user interaction (button click)
    ******************************************************************/
   window.RequestARPermissionsAndStart = async function () {
+    // Prevent automatic calls - only allow from button click
+    if (!window._userInitiatedARRequest) {
+      console.warn("RequestARPermissionsAndStart called without user interaction. Ignoring.");
+      return;
+    }
+    
+    // Reset the flag (but keep it if Unity is still loading)
+    if (unityInstance) {
+      window._userInitiatedARRequest = false;
+    }
+    
     try {
       console.log("Requesting AR permissions...");
 
@@ -147,32 +225,76 @@
       console.log("Permissions granted");
 
       if (unityInstance) {
+        // Hide overlay now that permissions are granted
+        document.getElementById("startOverlay").style.display = "none";
+        document.getElementById("unity-canvas").style.opacity = "1";
+        
         unityInstance.SendMessage(
           "ARBootstrap",
           "OnPermissionsGranted"
         );
       } else {
-        console.warn("Unity instance not available yet");
+        console.warn("Unity instance not available yet - permissions granted but waiting for Unity");
       }
 
     } catch (err) {
       console.error("Permission denied:", err);
+      
+      // Re-enable the button
+      const overlay = document.getElementById("startOverlay");
+      overlay.classList.remove("loading");
+      const button = document.getElementById("btnStartAR");
+      if (button) {
+        button.textContent = "Start AR";
+        button.style.opacity = "1";
+      }
+      
       if (unityInstance) {
         unityInstance.SendMessage(
           "ARBootstrap",
           "OnPermissionsDenied"
         );
+      } else {
+        // If Unity hasn't loaded yet, show error
+        alert("Camera permission is required for AR experience. Please allow camera access and try again.");
       }
+      
+      window._userInitiatedARRequest = false;
     }
   };
 
   /******************************************************************
    * HTML BUTTON → UNITY SAFE USER GESTURE
    ******************************************************************/
-  document.getElementById("btnStartAR").addEventListener("click", () => {
-    document.getElementById("startOverlay").style.display = "none";
-    window.RequestARPermissionsAndStart();
-  });
+  // Wait for DOM to be ready before attaching event listener
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupARButton);
+  } else {
+    setupARButton();
+  }
+  
+  function setupARButton() {
+    const btnStartAR = document.getElementById("btnStartAR");
+    if (btnStartAR) {
+      btnStartAR.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Prevent multiple clicks
+        if (isUnityLoading) {
+          return;
+        }
+        
+        // Mark that this is a user-initiated request
+        window._userInitiatedARRequest = true;
+        
+        // Start loading Unity first
+        startUnityLoading();
+      });
+    } else {
+      console.error("btnStartAR button not found!");
+    }
+  }
 
 </script>
 
