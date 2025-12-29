@@ -1,9 +1,9 @@
-const cacheName = "DefaultCompany-My project (1)-0.1";
+const cacheName = "azure-car-configure-0.1";
 const contentToCache = [
-    "Build/webAB.loader.js",
-    "Build/webAB.framework.js",
-    "Build/webAB.data",
-    "Build/webAB.wasm",
+    "Build/fordAR.loader.js",
+    "Build/fordAR.framework.js",
+    "Build/fordAR.data",
+    "Build/fordAR.wasm",
     "TemplateData/style.css"
 
 ];
