@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.0.62f1
-CRC: 2670541700
+CRC: 3300167640
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 9002d7efe555f43d5f78587fb96e2751
+    Hash: 445496dbaa17d7af80e192c6bf25c7a5
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8cf982c30c0e0e3954a35f217eb23219
+    Hash: 24cb63ff5982c44937eab0f680c790ad
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 79b8f4800c24797c0b23af12a3d26c32
+    Hash: e70676dd2eb7ea65fad667727e57f72f
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -29,8 +29,12 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 11500000, guid: 4dd6ee2bf98e7e7499c63c363472a268, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 17a64d9ee028447d985fe951d225f315, type: 3}
 - Class: 115
@@ -48,6 +52,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: CarDoor
 - AssemblyName: Assembly-CSharp
   ClassName: CarLight
+- AssemblyName: Assembly-CSharp
+  ClassName: MainCarColor
 Assets:
 - Assets/ABMaker/Car/ford_territory.prefab
 Dependencies: []
