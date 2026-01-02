@@ -202,6 +202,19 @@
             loadingBar.style.display = "none";
             window.unityInstance = unityInstance;
             console.log("Unity instance created. Call RequestWebcam(), StartWebcam(), StartMotionSensors(), or StartGPS() from Unity when needed.");
+         	 if (unityInstance) 
+			 {
+       		  	   window.addEventListener("message", function (event) 
+				   {
+					if (event.data && event.data.type === "FROM_PARENT") 
+					{
+					  const receivedValue = event.data.data;
+					  console.log("Received from parent:", receivedValue);
+					  // Send to Unity
+					  unityInstance.SendMessage('ScriptManager', 'ReceiveCommand', receivedValue);
+					}
+				  });
+			 }
           }).catch((message) => {
             alert(message);
           });
