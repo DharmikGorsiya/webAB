@@ -264,6 +264,12 @@
               if(window.unityInstance) {
                   window.unityInstance.SendMessage('ARCamera', 'OnCameraPermissionGranted');
                   window.unityInstance.SendMessage('WebGLPermissionManager', 'OnCameraPermissionGranted');
+                  
+                  // Keep keyboard focus inside Unity once permission flow completes
+                  const canvas = document.querySelector("#unity-canvas");
+                  if(canvas && typeof canvas.focus === "function") {
+                      canvas.focus({ preventScroll: true });
+                  }
               }
           }
           catch (err) {
