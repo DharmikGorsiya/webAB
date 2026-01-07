@@ -66,7 +66,7 @@
         <p id="errorText" style="text-align: center; width:60vw; color:#7f3f3f; font-size: max(3vw, 3vh);"></p>
     </div>
     <div id="unity-container">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="0"></canvas>
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -264,20 +264,6 @@
               if(window.unityInstance) {
                   window.unityInstance.SendMessage('ARCamera', 'OnCameraPermissionGranted');
                   window.unityInstance.SendMessage('WebGLPermissionManager', 'OnCameraPermissionGranted');
-                  
-                  // Keep keyboard focus inside Unity once permission flow completes
-                  const domCanvas = document.querySelector("#unity-canvas");
-                  const engineCanvas = window.unityInstance?.Module?.canvas;
-                  const targetCanvas = domCanvas || engineCanvas;
-                  if(targetCanvas) {
-                      targetCanvas.setAttribute("tabindex", "0");
-                      // Defer focus until after permission dialog closes
-                      requestAnimationFrame(() => {
-                          if(typeof targetCanvas.focus === "function") {
-                              targetCanvas.focus({ preventScroll: true });
-                          }
-                      });
-                  }
               }
           }
           catch (err) {
